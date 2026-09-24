@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Video Interview Screening</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Font - Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f6ff',
+              100: '#e0edff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom scrollbar and glassmorphism styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.8); border-radius: 4px; }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .pulse-record {
+      animation: pulse-red 1.5s infinite;
+    }
+    @keyframes pulse-red {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+  </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased text-slate-100 selection:bg-brand-500 selection:text-white">
+
+  <!-- App Top Navigation Header -->
+  <header class="glass-panel sticky top-0 z-30 border-b border-slate-800/80 px-4 py-3 sm:px-6">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <i class="fa-solid font-bold text-lg text-white fa-video"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-base sm:text-lg tracking-tight leading-none text-white">TalentScreen AI</h1>
+          <p class="text-xs text-slate-400 mt-0.5">2-Minute Video Response Assessment</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <button id="btnZohoConfig" class="flex items-center space-x-2 px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i>
+          <span class="hidden sm:inline">Zoho Settings</span>
+        </button>
+        <span id="zohoStatusBadge" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+          <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-400"></span>
+          Not Configured
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Body -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Left Column: Candidate Info & Instructions (4 cols desktop) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Candidate Details Card -->
+      <section class="glass-panel rounded-2xl p-5 shadow-xl border border-slate-800">
+        <div class="flex items-center space-x-2 mb-4 text-blue-400 font-semibold text-sm uppercase tracking-wider">
+          <i class="fa-solid fa-user-gear"></i>
+          <h2>Candidate Details</h2>
+        </div>
+
+        <form id="candidateForm" class="space-y-4" onsubmit="event.preventDefault();">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Full Name *</label>
+            <input type="text" id="candidateName" required placeholder="e.g. Alex Morgan"
+              class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-slate-500 outline-none transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Email Address *</label>
+            <input type="email" id="candidateEmail" required placeholder="alex.morgan@example.com"
+              class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-slate-500 outline-none transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Position / Assessment Topic *</label>
+            <select id="topicSelect" class="w-full px-3.5 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-200 outline-none transition">
+              <option value="Senior Frontend Engineer - System Design">Senior Frontend Engineer - System Design</option>
+              <option value="Product Manager - Vision & Roadmap">Product Manager - Vision & Roadmap</option>
+              <option value="Account Executive - Elevator Pitch">Account Executive - Elevator Pitch</option>
+              <option value="Customer Success - Problem Solving">Customer Success - Problem Solving</option>
+              <option value="General - Tell Us About Yourself">General - Tell Us About Yourself</option>
+            </select>
+          </div>
+
+          <div class="pt-1">
+            <label class="block text-xs font-medium text-slate-300 mb-1">Prompt Question</label>
+            <div id="topicPromptDisplay" class="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed italic">
+              "Briefly introduce yourself, your core technical experience, and why you are excited about this role in 2 minutes."
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <!-- Instructions & Rules -->
+      <section class="glass-panel rounded-2xl p-5 shadow-xl border border-slate-800 text-xs text-slate-400 space-y-3">
+        <h3 class="font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-circle-info text-blue-400"></i> Recording Guidelines
+        </h3>
+        <ul class="space-y-2 list-disc list-inside text-slate-300">
+          <li>You have a maximum of <strong>2 minutes (120s)</strong> to record your answer.</li>
+          <li>Ensure you are in a quiet, well-lit environment.</li>
+          <li>You can pause and resume, or record again before uploading.</li>
+          <li>When finished, click <strong>Upload Response</strong> to submit directly to Zoho WorkDrive.</li>
+        </ul>
+      </section>
+
+      <!-- Quick Audio Visualizer Visual Block -->
+      <section class="glass-panel rounded-2xl p-4 shadow-xl border border-slate-800 flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-medium text-slate-400">Mic Volume Monitor</span>
+          <span id="audioLevelText" class="text-xs text-slate-500">Muted</span>
+        </div>
+        <div class="w-full bg-slate-900 rounded-full h-3 p-0.5 border border-slate-800 overflow-hidden">
+          <div id="volumeBar" class="bg-gradient-to-r from-emerald-500 via-blue-500 to-indigo-500 h-full rounded-full w-0 transition-all duration-75"></div>
+        </div>
+        <canvas id="waveformCanvas" class="w-full h-10 mt-3 rounded-lg bg-slate-900/80 border border-slate-800/80"></canvas>
+      </section>
+
+    </div>
+
+    <!-- Right Column: Video Recorder Stage (7 cols desktop) -->
+    <div class="lg:col-span-7 flex flex-col space-y-4">
+      
+      <!-- Video Container Card -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl border border-slate-800 flex-1 flex flex-col justify-between relative overflow-hidden">
+        
+        <!-- Video Top Overlay Info Bar -->
+        <div class="flex items-center justify-between mb-3 z-10">
+          <div class="flex items-center space-x-2">
+            <span id="recordingBadge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400 border border-red-500/30 pulse-record">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+              REC
+            </span>
+            <span id="pausedBadge" class="hidden items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              <i class="fa-solid fa-pause"></i> PAUSED
+            </span>
+            <span id="standbyBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
+              <i class="fa-solid fa-camera"></i> Camera Ready
+            </span>
+          </div>
+
+          <!-- Timer Indicator Header -->
+          <div class="flex items-center space-x-2 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-800 font-mono text-sm">
+            <i class="fa-regular fa-clock text-blue-400"></i>
+            <span id="timerDisplay" class="font-bold text-white">02:00</span>
+            <span class="text-xs text-slate-500">left</span>
+          </div>
+        </div>
+
+        <!-- Video Screen Viewport -->
+        <div class="relative w-full aspect-video bg-black rounded-xl overflow-hidden border border-slate-800/90 shadow-inner group flex items-center justify-center">
+          
+          <!-- Live Preview Element -->
+          <video id="webcamPreview" autoplay playsinline muted class="w-full h-full object-cover transform -scale-x-100 transition-opacity duration-300"></video>
+          
+          <!-- Recorded Video Playback Element (hidden initially) -->
+          <video id="recordedPlayback" controls playsinline class="hidden w-full h-full object-cover bg-black"></video>
+
+          <!-- Permission Request Overlay Prompt -->
+          <div id="permissionPrompt" class="absolute inset-0 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center z-20 space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-2xl">
+              <i class="fa-solid fa-video"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">Camera & Microphone Access Needed</h3>
+              <p class="text-xs text-slate-400 max-w-sm mt-1">Please allow browser permissions to preview your camera and start your response recording.</p>
+            </div>
+            <button id="btnEnablePermissions" class="px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white font-medium text-sm rounded-xl transition shadow-lg shadow-blue-600/30 flex items-center space-x-2">
+              <i class="fa-solid fa-lock-open"></i>
+              <span>Enable Camera & Mic</span>
+            </button>
+          </div>
+
+          <!-- Device selector overlay buttons -->
+          <div id="deviceControls" class="absolute bottom-3 left-3 right-3 flex justify-between items-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10 bg-slate-950/60 backdrop-blur-md p-2 rounded-xl border border-slate-800/80">
+            <div class="flex items-center space-x-2 text-xs text-slate-300 w-1/2">
+              <i class="fa-solid fa-camera text-blue-400"></i>
+              <select id="videoDeviceSelect" class="bg-transparent w-full text-slate-200 truncate outline-none cursor-pointer"></select>
+            </div>
+            <div class="flex items-center space-x-2 text-xs text-slate-300 w-1/2 justify-end border-l border-slate-800 pl-2">
+              <i class="fa-solid fa-microphone text-blue-400"></i>
+              <select id="audioDeviceSelect" class="bg-transparent w-full text-slate-200 truncate outline-none cursor-pointer"></select>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Recording Countdown Progress Bar -->
+        <div class="mt-4 space-y-1">
+          <div class="flex justify-between text-xs text-slate-400 px-1">
+            <span>Progress (2 min max)</span>
+            <span id="timeElapsedText">00:00 elapsed</span>
+          </div>
+          <div class="w-full bg-slate-900 rounded-full h-2.5 p-0.5 border border-slate-800 overflow-hidden">
+            <div id="recordingProgressBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Main Action Recording Controls Bar -->
+        <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
+          
+          <!-- Start Button -->
+          <button id="btnStartRecord" disabled class="px-6 py-3 bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:hover:bg-red-600 text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-red-600/30 flex items-center space-x-2">
+            <i class="fa-solid fa-circle text-xs"></i>
+            <span>Start Recording</span>
+          </button>
+
+          <!-- Pause / Resume Button -->
+          <button id="btnPauseRecord" class="hidden px-5 py-3 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-sm rounded-xl transition flex items-center space-x-2">
+            <i class="fa-solid fa-pause"></i>
+            <span id="btnPauseText">Pause</span>
+          </button>
+
+          <!-- Stop Button -->
+          <button id="btnStopRecord" class="hidden px-5 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm rounded-xl border border-slate-700 transition flex items-center space-x-2">
+            <i class="fa-solid fa-square text-xs"></i>
+            <span>Done / Stop</span>
+          </button>
+
+          <!-- Re-record Button -->
+          <button id="btnRerecord" class="hidden px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm rounded-xl border border-slate-700 transition flex items-center space-x-2">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span>Retake Video</span>
+          </button>
+
+          <!-- Upload Button -->
+          <button id="btnUploadZoho" class="hidden px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm rounded-xl transition shadow-lg shadow-emerald-600/30 flex items-center space-x-2">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>Upload to WorkDrive</span>
+          </button>
+
+          <!-- Local Fallback Download -->
+          <button id="btnDownloadLocal" class="hidden px-4 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm rounded-xl border border-slate-700 transition flex items-center space-x-2" title="Save locally">
+            <i class="fa-solid fa-download"></i>
+            <span class="hidden sm:inline">Save MP4</span>
+          </button>
+        </div>
+
+        <!-- Upload Status / Alert Box -->
+        <div id="statusAlertBox" class="hidden mt-4 p-4 rounded-xl border text-sm transition-all duration-300 flex items-start space-x-3">
+          <i id="statusIcon" class="fa-solid fa-circle-info mt-0.5 text-base"></i>
+          <div class="flex-1">
+            <h4 id="statusTitle" class="font-semibold text-white">Status</h4>
+            <p id="statusDesc" class="text-xs text-slate-300 mt-0.5">Details here...</p>
+            <!-- Upload Progress Bar -->
+            <div id="uploadProgressContainer" class="hidden mt-2 w-full bg-slate-900 rounded-full h-2 border border-slate-800 overflow-hidden">
+              <div id="uploadProgressBar" class="bg-emerald-500 h-full w-0 transition-all duration-150"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Zoho WorkDrive Configuration Modal -->
+  <div id="zohoModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+    <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-slate-800 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
+            <i class="fa-solid fa-cloud"></i>
+          </div>
+          <h2 class="font-bold text-lg text-white">Zoho WorkDrive Settings</h2>
+        </div>
+        <button id="btnCloseModal" class="text-slate-400 hover:text-white p-1 transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="py-4 space-y-4">
+        
+        <p class="text-xs text-slate-400 leading-relaxed">
+          Configure your Zoho WorkDrive API OAuth credentials or direct Access Token. Videos recorded will automatically upload directly to your specified folder ID.
+        </p>
+
+        <!-- Auth Method Selector -->
+        <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900 rounded-xl border border-slate-800 text-xs font-medium">
+          <button id="tabAccessToken" class="py-2 rounded-lg text-center bg-blue-600 text-white transition">Direct Access Token</button>
+          <button id="tabOAuthRefresh" class="py-2 rounded-lg text-center text-slate-400 hover:text-white transition">OAuth Refresh Token</button>
+        </div>
+
+        <!-- Config Mode 1: Access Token -->
+        <div id="secAccessToken" class="space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Zoho Access Token *</label>
+            <input type="password" id="zohoAccessTokenInput" placeholder="1000.xxxx.xxxx"
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs font-mono text-slate-200 outline-none">
+            <p class="text-[10px] text-slate-500 mt-1">Generated from Zoho API Console with WorkDrive.workspace.ALL or WorkDrive.files.ALL scope.</p>
+          </div>
+        </div>
+
+        <!-- Config Mode 2: Refresh Token Credentials -->
+        <div id="secOAuthRefresh" class="hidden space-y-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Client ID</label>
+            <input type="text" id="zohoClientId" placeholder="1000.xxxxxxxxxxxx"
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs font-mono text-slate-200 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Client Secret</label>
+            <input type="password" id="zohoClientSecret" placeholder="xxxxxxxxxxxxxxxx"
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs font-mono text-slate-200 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Refresh Token</label>
+            <input type="password" id="zohoRefreshToken" placeholder="1000.xxxxxxxx.xxxx"
+              class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs font-mono text-slate-200 outline-none">
+          </div>
+        </div>
+
+        <!-- Common Folder ID -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Zoho WorkDrive Folder ID *</label>
+          <input type="text" id="zohoFolderId" placeholder="e.g. 1d7829s819a8291..."
+            class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs font-mono text-slate-200 outline-none">
+          <p class="text-[10px] text-slate-500 mt-1">Found in your WorkDrive folder URL: workdrive.zoho.com/home/folders/<b>[FOLDER_ID]</b></p>
+        </div>
+
+        <!-- Zoho Domain Selection -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Zoho Data Center Domain</label>
+          <select id="zohoDomainSelect" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700/80 rounded-xl focus:ring-2 focus:ring-blue-500 text-xs text-slate-200 outline-none">
+            <option value="https://workdrive.zoho.com">zoho.com (US / Global)</option>
+            <option value="https://workdrive.zoho.eu">zoho.eu (Europe)</option>
+            <option value="https://workdrive.zoho.in">zoho.in (India)</option>
+            <option value="https://workdrive.zoho.com.au">zoho.com.au (Australia)</option>
+            <option value="https://workdrive.zoho.jp">zoho.jp (Japan)</option>
+          </select>
+        </div>
+
+        <!-- Mock Mode Toggle for Demo/Testing -->
+        <div class="flex items-center justify-between p-3 bg-slate-900/60 rounded-xl border border-slate-800">
+          <div>
+            <span class="block text-xs font-medium text-slate-200">Simulation / Demo Mode</span>
+            <span class="block text-[10px] text-slate-400">Simulate Zoho API responses without live keys</span>
+          </div>
+          <input type="checkbox" id="chkMockMode" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-700 bg-slate-900">
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="pt-4 border-t border-slate-800 flex justify-end space-x-2">
+        <button id="btnSaveConfig" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs rounded-xl transition shadow-lg shadow-blue-600/30">
+          Save Configuration
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Global Constants and Application State
+    const MAX_DURATION_SEC = 120; // 2 minutes max
+    let mediaStream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordedBlob = null;
+    
+    // Audio Visualizer Context
+    let audioCtx = null;
+    let analyser = null;
+    let animFrameId = null;
+
+    // Timer State
+    let timerInterval = null;
+    let secondsLeft = MAX_DURATION_SEC;
+    let secondsElapsed = 0;
+    let isPaused = false;
+
+    // UI Elements References
+    const candidateName = document.getElementById('candidateName');
+    const candidateEmail = document.getElementById('candidateEmail');
+    const topicSelect = document.getElementById('topicSelect');
+    const topicPromptDisplay = document.getElementById('topicPromptDisplay');
+
+    const webcamPreview = document.getElementById('webcamPreview');
+    const recordedPlayback = document.getElementById('recordedPlayback');
+    const permissionPrompt = document.getElementById('permissionPrompt');
+    const btnEnablePermissions = document.getElementById('btnEnablePermissions');
+
+    const videoDeviceSelect = document.getElementById('videoDeviceSelect');
+    const audioDeviceSelect = document.getElementById('audioDeviceSelect');
+
+    const standbyBadge = document.getElementById('standbyBadge');
+    const recordingBadge = document.getElementById('recordingBadge');
+    const pausedBadge = document.getElementById('pausedBadge');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timeElapsedText = document.getElementById('timeElapsedText');
+    const recordingProgressBar = document.getElementById('recordingProgressBar');
+
+    const volumeBar = document.getElementById('volumeBar');
+    const audioLevelText = document.getElementById('audioLevelText');
+    const waveformCanvas = document.getElementById('waveformCanvas');
+    const canvasCtx = waveformCanvas.getContext('2d');
+
+    const btnStartRecord = document.getElementById('btnStartRecord');
+    const btnPauseRecord = document.getElementById('btnPauseRecord');
+    const btnPauseText = document.getElementById('btnPauseText');
+    const btnStopRecord = document.getElementById('btnStopRecord');
+    const btnRerecord = document.getElementById('btnRerecord');
+    const btnUploadZoho = document.getElementById('btnUploadZoho');
+    const btnDownloadLocal = document.getElementById('btnDownloadLocal');
+
+    const statusAlertBox = document.getElementById('statusAlertBox');
+    const statusIcon = document.getElementById('statusIcon');
+    const statusTitle = document.getElementById('statusTitle');
+    const statusDesc = statusAlertBox.querySelector('#statusDesc');
+    const uploadProgressContainer = document.getElementById('uploadProgressContainer');
+    const uploadProgressBar = document.getElementById('uploadProgressBar');
+
+    // Zoho Modal & Settings Elements
+    const btnZohoConfig = document.getElementById('btnZohoConfig');
+    const zohoModal = document.getElementById('zohoModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnSaveConfig = document.getElementById('btnSaveConfig');
+    const zohoStatusBadge = document.getElementById('zohoStatusBadge');
+
+    const tabAccessToken = document.getElementById('tabAccessToken');
+    const tabOAuthRefresh = document.getElementById('tabOAuthRefresh');
+    const secAccessToken = document.getElementById('secAccessToken');
+    const secOAuthRefresh = document.getElementById('secOAuthRefresh');
+
+    const zohoAccessTokenInput = document.getElementById('zohoAccessTokenInput');
+    const zohoClientId = document.getElementById('zohoClientId');
+    const zohoClientSecret = document.getElementById('zohoClientSecret');
+    const zohoRefreshToken = document.getElementById('zohoRefreshToken');
+    const zohoFolderId = document.getElementById('zohoFolderId');
+    const zohoDomainSelect = document.getElementById('zohoDomainSelect');
+    const chkMockMode = document.getElementById('chkMockMode');
+
+    let currentAuthMode = 'token'; // 'token' or 'oauth'
+
+    // Topic Prompts Dictionary
+    const prompts = {
+      "Senior Frontend Engineer - System Design": "Briefly describe a complex web app architecture you designed. How did you optimize rendering performance, handle state, and ensure accessibility?",
+      "Product Manager - Vision & Roadmap": "Tell us about a product feature you spearheaded from zero to one. How did you prioritize requirements and measure success?",
+      "Account Executive - Elevator Pitch": "Give us your best 90-second pitch introducing our software platform to an enterprise CTO.",
+      "Customer Success - Problem Solving": "Describe a scenario where a high-value customer was at risk of churning. What steps did you take to turn the situation around?",
+      "General - Tell Us About Yourself": "Briefly introduce yourself, your core technical experience, and why you are excited about this role in 2 minutes."
+    };
+
+    // Initialize Application
+    window.addEventListener('load', () => {
+      loadSavedConfig();
+      setupTopicListeners();
+      setupModalListeners();
+      setupMediaDeviceListeners();
+      checkZohoConfigStatus();
+    });
+
+    // Topic change prompt updater
+    function setupTopicListeners() {
+      topicSelect.addEventListener('change', (e) => {
+        const val = e.target.value;
+        topicPromptDisplay.innerText = `"${prompts[val] || prompts['General - Tell Us About Yourself']}"`;
+      });
+    }
+
+    // Zoho Configuration Modal Handler
+    function setupModalListeners() {
+      btnZohoConfig.addEventListener('click', () => {
+        zohoModal.classList.remove('opacity-0', 'pointer-events-none');
+      });
+
+      btnCloseModal.addEventListener('click', () => {
+        zohoModal.classList.add('opacity-0', 'pointer-events-none');
+      });
+
+      tabAccessToken.addEventListener('click', () => {
+        currentAuthMode = 'token';
+        tabAccessToken.className = "py-2 rounded-lg text-center bg-blue-600 text-white transition";
+        tabOAuthRefresh.className = "py-2 rounded-lg text-center text-slate-400 hover:text-white transition";
+        secAccessToken.classList.remove('hidden');
+        secOAuthRefresh.classList.add('hidden');
+      });
+
+      tabOAuthRefresh.addEventListener('click', () => {
+        currentAuthMode = 'oauth';
+        tabOAuthRefresh.className = "py-2 rounded-lg text-center bg-blue-600 text-white transition";
+        tabAccessToken.className = "py-2 rounded-lg text-center text-slate-400 hover:text-white transition";
+        secOAuthRefresh.classList.remove('hidden');
+        secAccessToken.classList.add('hidden');
+      });
+
+      btnSaveConfig.addEventListener('click', () => {
+        saveConfig();
+        zohoModal.classList.add('opacity-0', 'pointer-events-none');
+        showStatus('info', 'Settings Saved', 'Zoho WorkDrive configuration has been updated.');
+      });
+    }
+
+    function saveConfig() {
+      const config = {
+        mode: currentAuthMode,
+        accessToken: zohoAccessTokenInput.value.trim(),
+        clientId: zohoClientId.value.trim(),
+        clientSecret: zohoClientSecret.value.trim(),
+        refreshToken: zohoRefreshToken.value.trim(),
+        folderId: zohoFolderId.value.trim(),
+        domain: zohoDomainSelect.value,
+        mockMode: chkMockMode.checked
+      };
+      localStorage.setItem('zoho_workdrive_config', JSON.stringify(config));
+      checkZohoConfigStatus();
+    }
+
+    function loadSavedConfig() {
+      const saved = localStorage.getItem('zoho_workdrive_config');
+      if (saved) {
+        try {
+          const cfg = JSON.parse(saved);
+          currentAuthMode = cfg.mode || 'token';
+          zohoAccessTokenInput.value = cfg.accessToken || '';
+          zohoClientId.value = cfg.clientId || '';
+          zohoClientSecret.value = cfg.clientSecret || '';
+          zohoRefreshToken.value = cfg.refreshToken || '';
+          zohoFolderId.value = cfg.folderId || '';
+          zohoDomainSelect.value = cfg.domain || 'https://workdrive.zoho.com';
+          chkMockMode.checked = !!cfg.mockMode;
+
+          if (currentAuthMode === 'oauth') {
+            tabOAuthRefresh.click();
+          }
+        } catch (e) {
+          console.error("Failed to parse saved config", e);
+        }
+      } else {
+        // Default demo mock enabled for immediate seamless testing
+        chkMockMode.checked = true;
+      }
+    }
+
+    function checkZohoConfigStatus() {
+      const saved = localStorage.getItem('zoho_workdrive_config');
+      let isValid = false;
+      let isMock = false;
+
+      if (saved) {
+        const cfg = JSON.parse(saved);
+        isMock = cfg.mockMode;
+        if (isMock) {
+          isValid = true;
+        } else if (cfg.folderId && (cfg.accessToken || cfg.refreshToken)) {
+          isValid = true;
+        }
+      }
+
+      if (isMock) {
+        zohoStatusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20";
+        zohoStatusBadge.innerHTML = `<span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-purple-400"></span> Demo Mode`;
+      } else if (isValid) {
+        zohoStatusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        zohoStatusBadge.innerHTML = `<span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400"></span> Ready for Upload`;
+      } else {
+        zohoStatusBadge.className = "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        zohoStatusBadge.innerHTML = `<span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-400"></span> Config Needed`;
+      }
+    }
+
+    // Media Devices & Permissions setup
+    function setupMediaDeviceListeners() {
+      btnEnablePermissions.addEventListener('click', initCameraStream);
+      btnStartRecord.addEventListener('click', startRecording);
+      btnPauseRecord.addEventListener('click', togglePauseRecording);
+      btnStopRecord.addEventListener('click', stopRecording);
+      btnRerecord.addEventListener('click', resetRecorderToStandby);
+      btnUploadZoho.addEventListener('click', uploadToZohoWorkDrive);
+      btnDownloadLocal.addEventListener('click', downloadLocalVideo);
+
+      videoDeviceSelect.addEventListener('change', initCameraStream);
+      audioDeviceSelect.addEventListener('change', initCameraStream);
+    }
+
+    async function initCameraStream() {
+      try {
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop());
+        }
+
+        const videoDeviceId = videoDeviceSelect.value;
+        const audioDeviceId = audioDeviceSelect.value;
+
+        const constraints = {
+          video: videoDeviceId ? { deviceId: { exact: videoDeviceId }, width: { ideal: 1280 }, height: { ideal: 720 } } : { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: "user" },
+          audio: audioDeviceId ? { deviceId: { exact: audioDeviceId }, echoCancellation: true, noiseSuppression: true } : { echoCancellation: true, noiseSuppression: true }
+        };
+
+        mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+        webcamPreview.srcObject = mediaStream;
+        
+        permissionPrompt.classList.add('hidden');
+        btnStartRecord.disabled = false;
+
+        // Populate device dropdowns
+        await populateDeviceLists();
+
+        // Setup Audio Visualizer Analyser
+        setupAudioVisualizer(mediaStream);
+
+      } catch (err) {
+        console.error("Camera access error:", err);
+        showStatus('error', 'Camera Access Denied', 'Please grant browser camera and microphone permissions to record.');
+      }
+    }
+
+    async function populateDeviceLists() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const currentVideo = videoDeviceSelect.value;
+        const currentAudio = audioDeviceSelect.value;
+
+        videoDeviceSelect.innerHTML = '';
+        audioDeviceSelect.innerHTML = '';
+
+        devices.forEach(device => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          if (device.kind === 'videoinput') {
+            option.text = device.label || `Camera ${videoDeviceSelect.length + 1}`;
+            videoDeviceSelect.appendChild(option);
+          } else if (device.kind === 'audioinput') {
+            option.text = device.label || `Microphone ${audioDeviceSelect.length + 1}`;
+            audioDeviceSelect.appendChild(option);
+          }
+        });
+
+        if (currentVideo) videoDeviceSelect.value = currentVideo;
+        if (currentAudio) audioDeviceSelect.value = currentAudio;
+      } catch (e) {
+        console.warn("Could not populate device lists", e);
+      }
+    }
+
+    // Audio Visualizer Setup
+    function setupAudioVisualizer(stream) {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      const source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      source.connect(analyser);
+
+      drawWaveform();
+    }
+
+    function drawWaveform() {
+      if (!analyser) return;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function render() {
+        animFrameId = requestAnimationFrame(render);
+        analyser.getByteFrequencyData(dataArray);
+
+        // Calculate average volume for progress meter
+        let sum = 0;
+        for (let i = 0; i < bufferLength; i++) {
+          sum += dataArray[i];
+        }
+        let average = sum / bufferLength;
+        let volumePct = Math.min(100, Math.round((average / 128) * 100));
+
+        volumeBar.style.width = volumePct + '%';
+        audioLevelText.innerText = volumePct > 5 ? `${volumePct}%` : 'Muted';
+
+        // Render Canvas Bars
+        canvasCtx.clearRect(0, 0, waveformCanvas.width, waveformCanvas.height);
+        const barWidth = (waveformCanvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = (dataArray[i] / 255) * waveformCanvas.height;
+          canvasCtx.fillStyle = '#3b82f6';
+          canvasCtx.fillRect(x, waveformCanvas.height - barHeight, barWidth - 1, barHeight);
+          x += barWidth;
+        }
+      }
+
+      render();
+    }
+
+    // Recording Logic
+    function startRecording() {
+      if (!validateCandidateForm()) {
+        showStatus('error', 'Missing Information', 'Please fill in candidate Name, Email, and Topic before starting.');
+        return;
+      }
+
+      recordedChunks = [];
+      
+      // Determine supported mimeTypes for WebM / MP4
+      const mimeType = getSupportedMimeType();
+      const options = { mimeType };
+
+      try {
+        mediaRecorder = new MediaRecorder(mediaStream, options);
+      } catch (e) {
+        mediaRecorder = new MediaRecorder(mediaStream);
+      }
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = handleRecordingStopped;
+
+      mediaRecorder.start(1000); // chunk slice every 1s
+      
+      // UI Updates
+      standbyBadge.classList.add('hidden');
+      recordingBadge.classList.remove('hidden');
+      btnStartRecord.classList.add('hidden');
+      btnPauseRecord.classList.remove('hidden');
+      btnStopRecord.classList.remove('hidden');
+
+      // Start 2-minute Countdown
+      secondsLeft = MAX_DURATION_SEC;
+      secondsElapsed = 0;
+      isPaused = false;
+      updateTimerDisplay();
+
+      clearInterval(timerInterval);
+      timerInterval = setInterval(tickTimer, 1000);
+
+      showStatus('info', 'Recording Started', 'You have up to 2 minutes to present your answer.');
+    }
+
+    function getSupportedMimeType() {
+      const types = [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/webm',
+        'video/mp4'
+      ];
+      for (let type of types) {
+        if (MediaRecorder.isTypeSupported(type)) return type;
+      }
+      return '';
+    }
+
+    function togglePauseRecording() {
+      if (!mediaRecorder) return;
+
+      if (mediaRecorder.state === 'recording') {
+        mediaRecorder.pause();
+        isPaused = true;
+        recordingBadge.classList.add('hidden');
+        pausedBadge.classList.remove('hidden');
+        btnPauseText.innerText = "Resume";
+      } else if (mediaRecorder.state === 'paused') {
+        mediaRecorder.resume();
+        isPaused = false;
+        pausedBadge.classList.add('hidden');
+        recordingBadge.classList.remove('hidden');
+        btnPauseText.innerText = "Pause";
+      }
+    }
+
+    function tickTimer() {
+      if (isPaused) return;
+
+      secondsElapsed++;
+      secondsLeft--;
+
+      updateTimerDisplay();
+
+      if (secondsLeft <= 0) {
+        stopRecording();
+        showStatus('info', 'Time Limit Reached', '2-minute maximum recording limit reached automatically.');
+      }
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(secondsLeft / 60);
+      const secs = secondsLeft % 60;
+      timerDisplay.innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      
+      const elapsedMins = Math.floor(secondsElapsed / 60);
+      const elapsedSecs = secondsElapsed % 60;
+      timeElapsedText.innerText = `${String(elapsedMins).padStart(2, '0')}:${String(elapsedSecs).padStart(2, '0')} elapsed`;
+
+      const pct = (secondsElapsed / MAX_DURATION_SEC) * 100;
+      recordingProgressBar.style.width = `${Math.min(100, pct)}%`;
+    }
+
+    function stopRecording() {
+      clearInterval(timerInterval);
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    function handleRecordingStopped() {
+      // Create Video Blob
+      const type = mediaRecorder.mimeType || 'video/webm';
+      recordedBlob = new Blob(recordedChunks, { type });
+
+      // Switch viewports from Live to Playback
+      webcamPreview.classList.add('hidden');
+      recordedPlayback.classList.remove('hidden');
+      recordedPlayback.src = URL.createObjectURL(recordedBlob);
+
+      // UI Controls transition
+      recordingBadge.classList.add('hidden');
+      pausedBadge.classList.add('hidden');
+      standbyBadge.classList.remove('hidden');
+      standbyBadge.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> Recording Complete`;
+
+      btnPauseRecord.classList.add('hidden');
+      btnStopRecord.classList.add('hidden');
+      btnRerecord.classList.remove('hidden');
+      btnUploadZoho.classList.remove('hidden');
+      btnDownloadLocal.classList.remove('hidden');
+
+      showStatus('success', 'Recording Captured', 'Review your candidate recording below before uploading.');
+    }
+
+    function resetRecorderToStandby() {
+      recordedChunks = [];
+      recordedBlob = null;
+      secondsLeft = MAX_DURATION_SEC;
+      secondsElapsed = 0;
+      isPaused = false;
+
+      updateTimerDisplay();
+
+      recordedPlayback.classList.add('hidden');
+      recordedPlayback.src = '';
+      webcamPreview.classList.remove('hidden');
+
+      btnRerecord.classList.add('hidden');
+      btnUploadZoho.classList.add('hidden');
+      btnDownloadLocal.classList.add('hidden');
+      btnStartRecord.classList.remove('hidden');
+
+      standbyBadge.innerHTML = `<i class="fa-solid fa-camera"></i> Camera Ready`;
+      statusAlertBox.classList.add('hidden');
+    }
+
+    function validateCandidateForm() {
+      if (!candidateName.value.trim() || !candidateEmail.value.trim()) {
+        return false;
+      }
+      return true;
+    }
+
+    function generateFileName() {
+      const name = candidateName.value.trim().replace(/[^a-zA-Z0-9]/g, '_');
+      const topic = topicSelect.value.trim().replace(/[^a-zA-Z0-9]/g, '_');
+      const dateStr = new Date().toISOString().slice(0, 10);
+      const ext = recordedBlob.type.includes('mp4') ? 'mp4' : 'webm';
+      return `${name}_${topic}_${dateStr}.${ext}`;
+    }
+
+    function downloadLocalVideo() {
+      if (!recordedBlob) return;
+      const url = URL.createObjectURL(recordedBlob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = generateFileName();
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }, 100);
+    }
+
+    // Zoho WorkDrive Upload Handler
+    async function uploadToZohoWorkDrive() {
+      if (!recordedBlob) {
+        showStatus('error', 'No Video Recorded', 'Please capture your interview video before uploading.');
+        return;
+      }
+
+      const saved = localStorage.getItem('zoho_workdrive_config');
+      if (!saved) {
+        btnZohoConfig.click();
+        showStatus('error', 'Configuration Required', 'Please set up your Zoho WorkDrive API settings.');
+        return;
+      }
+
+      const config = JSON.parse(saved);
+
+      // Disable Buttons during upload
+      btnUploadZoho.disabled = true;
+      btnRerecord.disabled = true;
+      showStatus('info', 'Uploading to Zoho WorkDrive...', 'Please wait while your candidate video response is uploaded.', true);
+
+      try {
+        if (config.mockMode) {
+          // Simulate network upload with live progress bar
+          await simulateZohoUpload();
+          showStatus('success', 'Uploaded Successfully (Demo Mode)', 'Video file successfully uploaded to Zoho WorkDrive destination.');
+        } else {
+          // Perform Real Zoho WorkDrive API Direct Upload
+          await performRealZohoUpload(config);
+          showStatus('success', 'Upload Successful', 'Candidate interview video successfully stored in Zoho WorkDrive.');
+        }
+      } catch (err) {
+        console.error("Zoho Upload Error:", err);
+        showStatus('error', 'Upload Failed', err.message || 'Error uploading file to Zoho WorkDrive. Check your API token or credentials.');
+      } finally {
+        btnUploadZoho.disabled = false;
+        btnRerecord.disabled = false;
+      }
+    }
+
+    // Direct Multipart API Upload to Zoho WorkDrive
+    async function performRealZohoUpload(config) {
+      let token = config.accessToken;
+
+      // Handle OAuth Refresh Token Token Retrieval if configured
+      if (config.mode === 'oauth' && config.refreshToken) {
+        token = await refreshZohoAccessToken(config);
+      }
+
+      if (!token) {
+        throw new Error('Missing valid Zoho Access Token.');
+      }
+
+      if (!config.folderId) {
+        throw new Error('Missing Zoho WorkDrive Folder ID.');
+      }
+
+      const filename = generateFileName();
+      const domain = config.domain || 'https://workdrive.zoho.com';
+      const uploadEndpoint = `${domain}/api/v1/upload`;
+
+      const formData = new FormData();
+      formData.append('filename', filename);
+      formData.append('parent_id', config.folderId);
+      formData.append('content', recordedBlob, filename);
+
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', uploadEndpoint, true);
+        xhr.setRequestHeader('Authorization', `Zoho-oauthtoken ${token}`);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            uploadProgressBar.style.width = `${pct}%`;
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(JSON.parse(xhr.responseText));
+          } else {
+            let errMsg = `Server returned code ${xhr.status}`;
+            try {
+              const res = JSON.parse(xhr.responseText);
+              if (res.errors && res.errors[0]) errMsg = res.errors[0].title || errMsg;
+            } catch (e) {}
+            reject(new Error(errMsg));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error('Network connection error during upload.'));
+        xhr.send(formData);
+      });
+    }
+
+    async function refreshZohoAccessToken(config) {
+      const tokenUrl = `https://accounts.zoho.com/oauth/v2/token?refresh_token=${config.refreshToken}&client_id=${config.clientId}&client_secret=${config.clientSecret}&grant_type=refresh_token`;
+      
+      const response = await fetch(tokenUrl, { method: 'POST' });
+      const data = await response.json();
+      if (data.access_token) {
+        return data.access_token;
+      } else {
+        throw new Error('Failed to refresh Zoho access token: ' + (data.error || 'Invalid credentials'));
+      }
+    }
+
+    function simulateZohoUpload() {
+      return new Promise((resolve) => {
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 10;
+          uploadProgressBar.style.width = `${progress}%`;
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(resolve, 300);
+          }
+        }, 150);
+      });
+    }
+
+    // Helper function for showing status alerts
+    function showStatus(type, title, message, showProgress = false) {
+      statusAlertBox.classList.remove('hidden', 'bg-red-500/10', 'border-red-500/20', 'text-red-400', 'bg-emerald-500/10', 'border-emerald-500/20', 'text-emerald-400', 'bg-blue-500/10', 'border-blue-500/20', 'text-blue-400');
+      
+      if (showProgress) {
+        uploadProgressContainer.classList.remove('hidden');
+        uploadProgressBar.style.width = '0%';
+      } else {
+        uploadProgressContainer.classList.add('hidden');
+      }
+
+      statusTitle.innerText = title;
+      statusDesc.innerText = message;
+
+      if (type === 'error') {
+        statusAlertBox.classList.add('bg-red-500/10', 'border-red-500/20');
+        statusIcon.className = 'fa-solid fa-circle-exclamation text-red-400 text-base mt-0.5';
+      } else if (type === 'success') {
+        statusAlertBox.classList.add('bg-emerald-500/10', 'border-emerald-500/20');
+        statusIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-base mt-0.5';
+      } else {
+        statusAlertBox.classList.add('bg-blue-500/10', 'border-blue-500/20');
+        statusIcon.className = 'fa-solid fa-circle-info text-blue-400 text-base mt-0.5';
+      }
+    }
+  </script>
+</body>
+</html>
